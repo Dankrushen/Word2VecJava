@@ -12,21 +12,21 @@ import java.util.Map;
  */
 class SkipGramModelTrainer extends NeuralNetworkTrainer {
 	
-	SkipGramModelTrainer(NeuralNetworkConfig config, Multiset<String> counts, Map<String, HuffmanNode> huffmanNodes, TrainingProgressListener listener) {
+	SkipGramModelTrainer(NeuralNetworkConfig config, Multiset<Integer> counts, Map<Integer, HuffmanNode> huffmanNodes, TrainingProgressListener listener) {
 		super(config, counts, huffmanNodes, listener);
 	}
 	
 	/** {@link Worker} for {@link SkipGramModelTrainer} */
 	private class SkipGramWorker extends Worker {
-		private SkipGramWorker(int randomSeed, int iter, Iterable<List<String>> batch) {
+		private SkipGramWorker(int randomSeed, int iter, Iterable<List<Integer>> batch) {
 			super(randomSeed, iter, batch);
 		}
 		
-		@Override void trainSentence(List<String> sentence) {
+		@Override void trainSentence(List<Integer> sentence) {
 			int sentenceLength = sentence.size();
 			
 			for (int sentencePosition = 0; sentencePosition < sentenceLength; sentencePosition++) {
-				String word = sentence.get(sentencePosition);
+				Integer word = sentence.get(sentencePosition);
 				HuffmanNode huffmanNode = huffmanNodes.get(word);
 
 				for (int c = 0; c < layer1_size; c++)
@@ -84,7 +84,7 @@ class SkipGramModelTrainer extends NeuralNetworkTrainer {
 		}
 	}
 
-	@Override Worker createWorker(int randomSeed, int iter, Iterable<List<String>> batch) {
+	@Override Worker createWorker(int randomSeed, int iter, Iterable<List<Integer>> batch) {
 		return new SkipGramWorker(randomSeed, iter, batch);
 	}
 }

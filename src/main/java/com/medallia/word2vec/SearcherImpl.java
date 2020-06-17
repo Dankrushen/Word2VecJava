@@ -14,12 +14,12 @@ import java.util.List;
 /** Implementation of {@link Searcher} */
 class SearcherImpl implements Searcher {
   private final NormalizedWord2VecModel model;
-  private final ImmutableMap<String, Integer> word2vectorOffset;
+  private final ImmutableMap<Integer, Integer> word2vectorOffset;
 
   SearcherImpl(final NormalizedWord2VecModel model) {
 	this.model = model;
 
-	final ImmutableMap.Builder<String, Integer> result = ImmutableMap.builder();
+	final ImmutableMap.Builder<Integer, Integer> result = ImmutableMap.builder();
 	for (int i = 0; i < model.vocab.size(); i++) {
 	  result.put(model.vocab.get(i), i * model.layerSize);
 	}
@@ -31,23 +31,23 @@ class SearcherImpl implements Searcher {
 	this(NormalizedWord2VecModel.fromWord2VecModel(model));
   }
 
-  @Override public List<Match> getMatches(String s, int maxNumMatches) throws UnknownWordException {
+  @Override public List<Match> getMatches(Integer s, int maxNumMatches) throws UnknownWordException {
 	return getMatches(getVector(s), maxNumMatches);
   }
 
-  @Override public double cosineDistance(String s1, String s2) throws UnknownWordException {
+  @Override public double cosineDistance(Integer s1, Integer s2) throws UnknownWordException {
 	return calculateDistance(getVector(s1), getVector(s2));
   }
 
-  @Override public boolean contains(String word) {
+  @Override public boolean contains(Integer word) {
 	return word2vectorOffset.containsKey(word);
   }
 
   @Override public List<Match> getMatches(final double[] vec, int maxNumMatches) {
 	return Match.ORDERING.greatestOf(
-		Iterables.transform(model.vocab, new Function<String, Match>() {
+		Iterables.transform(model.vocab, new Function<Integer, Match>() {
 		  @Override
-		  public Match apply(String other) {
+		  public Match apply(Integer other) {
 			double[] otherVec = getVectorOrNull(other);
 			double d = calculateDistance(otherVec, vec);
 			return new MatchImpl(other, d);
@@ -64,7 +64,7 @@ class SearcherImpl implements Searcher {
 	return d;
   }
 
-  @Override public ImmutableList<Double> getRawVector(String word) throws UnknownWordException {
+  @Override public ImmutableList<Double> getRawVector(Integer word) throws UnknownWordException {
 	return ImmutableList.copyOf(Doubles.asList(getVector(word)));
   }
 
@@ -72,7 +72,7 @@ class SearcherImpl implements Searcher {
    * @return Vector for the given word
    * @throws UnknownWordException If word is not in the model's vocabulary
    */
-  private double[] getVector(String word) throws UnknownWordException {
+  private double[] getVector(Integer word) throws UnknownWordException {
 	final double[] result = getVectorOrNull(word);
 	if(result == null)
 	  throw new UnknownWordException(word);
@@ -80,7 +80,7 @@ class SearcherImpl implements Searcher {
 	return result;
   }
 
-  private double[] getVectorOrNull(final String word) {
+  private double[] getVectorOrNull(final Integer word) {
 	final Integer index = word2vectorOffset.get(word);
 	  if(index == null)
 		return null;
@@ -100,13 +100,13 @@ class SearcherImpl implements Searcher {
 	return diff;
   }
 
-  @Override public SemanticDifference similarity(String s1, String s2) throws UnknownWordException {
+  @Override public SemanticDifference similarity(Integer s1, Integer s2) throws UnknownWordException {
 	double[] v1 = getVector(s1);
 	double[] v2 = getVector(s2);
 	final double[] diff = getDifference(v1, v2);
 
 	return new SemanticDifference() {
-	  @Override public List<Match> getMatches(String word, int maxMatches) throws UnknownWordException {
+	  @Override public List<Match> getMatches(Integer word, int maxMatches) throws UnknownWordException {
 		double[] target = getDifference(getVector(word), diff);
 		return SearcherImpl.this.getMatches(target, maxMatches);
 	  }
@@ -114,12 +114,12 @@ class SearcherImpl implements Searcher {
   }
 
   /** Implementation of {@link Match} */
-  private static class MatchImpl extends Pair<String, Double> implements Match {
-	private MatchImpl(String first, Double second) {
+  private static class MatchImpl extends Pair<Integer, Double> implements Match {
+	private MatchImpl(Integer first, Double second) {
 	  super(first, second);
 	}
 
-	@Override public String match() {
+	@Override public Integer match() {
 	  return first;
 	}
 

@@ -36,7 +36,7 @@ public class Word2VecModelThrift implements org.apache.thrift.TBase<Word2VecMode
     schemes.put(TupleScheme.class, new Word2VecModelThriftTupleSchemeFactory());
   }
 
-  private List<String> vocab; // optional
+  private List<Integer> vocab; // optional
   private int layerSize; // optional
   private List<Double> vectors; // optional
 
@@ -132,7 +132,7 @@ public class Word2VecModelThrift implements org.apache.thrift.TBase<Word2VecMode
   public Word2VecModelThrift(Word2VecModelThrift other) {
     __isset_bitfield = other.__isset_bitfield;
     if (other.isSetVocab()) {
-      List<String> __this__vocab = new ArrayList<String>(other.vocab);
+      List<Integer> __this__vocab = new ArrayList<Integer>(other.vocab);
       this.vocab = __this__vocab;
     }
     this.layerSize = other.layerSize;
@@ -158,22 +158,22 @@ public class Word2VecModelThrift implements org.apache.thrift.TBase<Word2VecMode
     return (this.vocab == null) ? 0 : this.vocab.size();
   }
 
-  public java.util.Iterator<String> getVocabIterator() {
+  public java.util.Iterator<Integer> getVocabIterator() {
     return (this.vocab == null) ? null : this.vocab.iterator();
   }
 
-  public void addToVocab(String elem) {
+  public void addToVocab(Integer elem) {
     if (this.vocab == null) {
-      this.vocab = new ArrayList<String>();
+      this.vocab = new ArrayList<Integer>();
     }
     this.vocab.add(elem);
   }
 
-  public List<String> getVocab() {
+  public List<Integer> getVocab() {
     return this.vocab;
   }
 
-  public Word2VecModelThrift setVocab(List<String> vocab) {
+  public Word2VecModelThrift setVocab(List<Integer> vocab) {
     this.vocab = vocab;
     return this;
   }
@@ -261,7 +261,7 @@ public class Word2VecModelThrift implements org.apache.thrift.TBase<Word2VecMode
       if (value == null) {
         unsetVocab();
       } else {
-        setVocab((List<String>)value);
+        setVocab((List<Integer>)value);
       }
       break;
 
@@ -513,12 +513,12 @@ public class Word2VecModelThrift implements org.apache.thrift.TBase<Word2VecMode
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
                 org.apache.thrift.protocol.TList _list0 = iprot.readListBegin();
-                struct.vocab = new ArrayList<String>(_list0.size);
+                struct.vocab = new ArrayList<Integer>(_list0.size);
                 for (int _i1 = 0; _i1 < _list0.size; ++_i1)
                 {
                   String _elem2;
                   _elem2 = iprot.readString();
-                  struct.vocab.add(_elem2);
+                  struct.vocab.add(Integer.parseInt(_elem2));
                 }
                 iprot.readListEnd();
               }
@@ -573,9 +573,9 @@ public class Word2VecModelThrift implements org.apache.thrift.TBase<Word2VecMode
           oprot.writeFieldBegin(VOCAB_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, struct.vocab.size()));
-            for (String _iter6 : struct.vocab)
+            for (Integer _iter6 : struct.vocab)
             {
-              oprot.writeString(_iter6);
+              oprot.writeString(_iter6.toString());
             }
             oprot.writeListEnd();
           }
@@ -632,9 +632,9 @@ public class Word2VecModelThrift implements org.apache.thrift.TBase<Word2VecMode
       if (struct.isSetVocab()) {
         {
           oprot.writeI32(struct.vocab.size());
-          for (String _iter8 : struct.vocab)
+          for (Integer _iter8 : struct.vocab)
           {
-            oprot.writeString(_iter8);
+            oprot.writeString(_iter8.toString());
           }
         }
       }
@@ -659,12 +659,12 @@ public class Word2VecModelThrift implements org.apache.thrift.TBase<Word2VecMode
       if (incoming.get(0)) {
         {
           org.apache.thrift.protocol.TList _list10 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
-          struct.vocab = new ArrayList<String>(_list10.size);
+          struct.vocab = new ArrayList<Integer>(_list10.size);
           for (int _i11 = 0; _i11 < _list10.size; ++_i11)
           {
             String _elem12;
             _elem12 = iprot.readString();
-            struct.vocab.add(_elem12);
+            struct.vocab.add(Integer.parseInt(_elem12));
           }
         }
         struct.setVocabIsSet(true);

@@ -70,7 +70,7 @@ public class Word2VecTrainerBuilder {
 	private NeuralNetworkType type;
 	private int negativeSamples;
 	private boolean useHierarchicalSoftmax;
-	private Multiset<String> vocab;
+	private Multiset<Integer> vocab;
 	private Integer minFrequency;
 	private Double initialLearningRate;
 	private Double downSampleRate;
@@ -151,7 +151,7 @@ public class Word2VecTrainerBuilder {
 	 * If this is not specified, word2vec will attempt to learn a vocabulary from the training data
 	 * @param vocab {@link Map} from token to frequency
 	 */
-	public Word2VecTrainerBuilder useVocab(Multiset<String> vocab) {
+	public Word2VecTrainerBuilder useVocab(Multiset<Integer> vocab) {
 		this.vocab = Preconditions.checkNotNull(vocab);
 		return this;
 	}
@@ -205,7 +205,7 @@ public class Word2VecTrainerBuilder {
 	}
 	
 	/** Train the model */
-	public Word2VecModel train(Iterable<List<String>> sentences) throws InterruptedException {
+	public Word2VecModel train(Iterable<List<Integer>> sentences) throws InterruptedException {
 		this.type = MoreObjects.firstNonNull(type, NeuralNetworkType.CBOW);
 		this.initialLearningRate = MoreObjects.firstNonNull(initialLearningRate, type.getDefaultInitialLearningRate());
 		if (this.numThreads == null)
@@ -222,8 +222,8 @@ public class Word2VecTrainerBuilder {
 			}
 		});
 		
-		Optional<Multiset<String>> vocab = this.vocab == null
-				? Optional.<Multiset<String>>absent()
+		Optional<Multiset<Integer>> vocab = this.vocab == null
+				? Optional.<Multiset<Integer>>absent()
 				: Optional.of(this.vocab);
 		
 		return new Word2VecTrainer(

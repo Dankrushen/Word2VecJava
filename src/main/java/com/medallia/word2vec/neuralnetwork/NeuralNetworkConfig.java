@@ -42,7 +42,7 @@ public class NeuralNetworkConfig {
 	}
 
 	/** @return {@link NeuralNetworkTrainer} */
-	public NeuralNetworkTrainer createTrainer(ImmutableMultiset<String> vocab, Map<String, HuffmanNode> huffmanNodes, TrainingProgressListener listener) {
+	public NeuralNetworkTrainer createTrainer(ImmutableMultiset<Integer> vocab, Map<Integer, HuffmanNode> huffmanNodes, TrainingProgressListener listener) {
 		return type.createTrainer(this, vocab, huffmanNodes, listener);
 	}
 	

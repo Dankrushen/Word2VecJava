@@ -9,13 +9,13 @@ import java.util.List;
 /** Provides search functionality */
 public interface Searcher {
 	/** @return true if a word is inside the model's vocabulary. */
-	boolean contains(String word);
+	boolean contains(Integer word);
 	
 	/** @return Raw word vector */
-	ImmutableList<Double> getRawVector(String word) throws UnknownWordException;
+	ImmutableList<Double> getRawVector(Integer word) throws UnknownWordException;
 	
 	/** @return Top matches to the given word */
-	List<Match> getMatches(String word, int maxMatches) throws UnknownWordException;
+	List<Match> getMatches(Integer word, int maxMatches) throws UnknownWordException;
 	
 	/** @return Top matches to the given vector */
 	List<Match> getMatches(final double[] vec, int maxNumMatches);
@@ -23,19 +23,19 @@ public interface Searcher {
 	/** Represents the similarity between two words */
 	public interface SemanticDifference {
 		/** @return Top matches to the given word which share this semantic relationship */
-		List<Match> getMatches(String word, int maxMatches) throws UnknownWordException;
+		List<Match> getMatches(Integer word, int maxMatches) throws UnknownWordException;
 	}
 	
 	/** @return {@link SemanticDifference} between the word vectors for the given */
-	SemanticDifference similarity(String s1, String s2) throws UnknownWordException;
+	SemanticDifference similarity(Integer s1, Integer s2) throws UnknownWordException;
 
 	/** @return cosine similarity between two words. */
-	double cosineDistance(String s1, String s2) throws UnknownWordException;
+	double cosineDistance(Integer s1, Integer s2) throws UnknownWordException;
 	
 	/** Represents a match to a search word */
 	public interface Match {
 		/** @return Matching word */
-		String match();
+		Integer match();
 		/** @return Cosine distance of the match */
 		double distance();
 		/** {@link Ordering} which compares {@link Match#distance()} */
@@ -45,8 +45,8 @@ public interface Searcher {
 			}
 		});
 		/** {@link Function} which forwards to {@link #match()} */
-		Function<Match, String> TO_WORD = new Function<Match, String>() {
-			@Override public String apply(Match result) {
+		Function<Match, Integer> TO_WORD = new Function<Match, Integer>() {
+			@Override public Integer apply(Match result) {
 				return result.match();
 			}
 		};
@@ -54,7 +54,7 @@ public interface Searcher {
 	
 	/** Exception when a word is unknown to the {@link Word2VecModel}'s vocabulary */
 	public static class UnknownWordException extends Exception {
-		UnknownWordException(String word) {
+		UnknownWordException(Integer word) {
 			super(String.format("Unknown search word '%s'", word));
 		}
 	}

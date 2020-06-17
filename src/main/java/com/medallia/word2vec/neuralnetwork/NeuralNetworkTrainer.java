@@ -49,7 +49,7 @@ public abstract class NeuralNetworkTrainer {
 	private final TrainingProgressListener listener;
 	
 	final NeuralNetworkConfig config;
-	final Map<String, HuffmanNode> huffmanNodes;
+	final Map<Integer, HuffmanNode> huffmanNodes;
 	private final int vocabSize;
 	final int layer1_size;
 	final int window;
@@ -81,7 +81,7 @@ public abstract class NeuralNetworkTrainer {
 	private final int[] table;
 	long startNano;
 	
-	NeuralNetworkTrainer(NeuralNetworkConfig config, Multiset<String> vocab, Map<String, HuffmanNode> huffmanNodes, TrainingProgressListener listener) {
+	NeuralNetworkTrainer(NeuralNetworkConfig config, Multiset<Integer> vocab, Map<Integer, HuffmanNode> huffmanNodes, TrainingProgressListener listener) {
 		this.config = config;
 		this.huffmanNodes = huffmanNodes;
 		this.listener = listener;
@@ -156,7 +156,7 @@ public abstract class NeuralNetworkTrainer {
 	}
 	
 	/** @return Trained NN model */
-	public NeuralNetworkModel train(final Iterable<List<String>> sentences) throws InterruptedException {
+	public NeuralNetworkModel train(final Iterable<List<Integer>> sentences) throws InterruptedException {
 		// Create an executor that runs as many threads as are defined in the config, and blocks if
 		// you're trying to run more. This is to make sure we don't read the entire corpus into
 		// memory.
@@ -171,14 +171,14 @@ public abstract class NeuralNetworkTrainer {
 		numTrainedTokens += numSentences;
 
 		// Partition the sentences into batches
-		final Iterable<List<List<String>>> batched = Iterables.partition(sentences, 1024);
+		final Iterable<List<List<Integer>>> batched = Iterables.partition(sentences, 1024);
 
 		try {
 			listener.update(Stage.TRAIN_NEURAL_NETWORK, 0.0);
 			for (int iter = config.iterations; iter > 0; iter--) {
 				List<ListenableFuture<?>> futures = new ArrayList<>(64);
 				int i = 0;
-				for (final List<List<String>> batch : batched) {
+				for (final List<List<Integer>> batch : batched) {
 					futures.add(ex.submit(createWorker(i, iter, batch)));
 					i++;
 				}
@@ -206,7 +206,7 @@ public abstract class NeuralNetworkTrainer {
 	}
 	
 	/** @return {@link Worker} to process the given sentences */
-	abstract Worker createWorker(int randomSeed, int iter, Iterable<List<String>> batch);
+	abstract Worker createWorker(int randomSeed, int iter, Iterable<List<Integer>> batch);
 	
 	/** Worker thread that updates the neural network model */
 	abstract class Worker extends CallableVoid {
@@ -214,7 +214,7 @@ public abstract class NeuralNetworkTrainer {
 		
 		long nextRandom;
 		final int iter;
-		final Iterable<List<String>> batch;
+		final Iterable<List<Integer>> batch;
 		
 		/** 
 		 * The number of words observed in the training data for this worker that exist
@@ -227,16 +227,16 @@ public abstract class NeuralNetworkTrainer {
 		final double[] neu1 = new double[layer1_size];
 		final double[] neu1e = new double[layer1_size];
 		
-		Worker(int randomSeed, int iter, Iterable<List<String>> batch) {
+		Worker(int randomSeed, int iter, Iterable<List<Integer>> batch) {
 			this.nextRandom = randomSeed;
 			this.iter = iter;
 			this.batch = batch;
 		}
 		
 		@Override public void run() throws InterruptedException {
-			for (List<String> sentence : batch) {
-				List<String> filteredSentence = new ArrayList<>(sentence.size());
-				for (String s : sentence) {
+			for (List<Integer> sentence : batch) {
+				List<Integer> filteredSentence = new ArrayList<>(sentence.size());
+				for (Integer s : sentence) {
 					if (!huffmanNodes.containsKey(s))
 						continue;
 							
@@ -258,8 +258,8 @@ public abstract class NeuralNetworkTrainer {
 				// Turns out if you don't do this, the produced word vectors aren't as tasty
 				wordCount++;
 				
-				Iterable<List<String>> partitioned = Iterables.partition(filteredSentence, MAX_SENTENCE_LENGTH);
-				for (List<String> chunked : partitioned) {
+				Iterable<List<Integer>> partitioned = Iterables.partition(filteredSentence, MAX_SENTENCE_LENGTH);
+				for (List<Integer> chunked : partitioned) {
 					if (Thread.currentThread().isInterrupted())
 						throw new InterruptedException("Interrupted while training word2vec model");
 					
@@ -328,6 +328,6 @@ public abstract class NeuralNetworkTrainer {
 		}
 		
 		/** Update the model with the given raw sentence */
-		abstract void trainSentence(List<String> unfiltered);
+		abstract void trainSentence(List<Integer> unfiltered);
 	}
 }

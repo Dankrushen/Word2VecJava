@@ -12,21 +12,21 @@ import java.util.Map;
  */
 class CBOWModelTrainer extends NeuralNetworkTrainer {
 	
-	CBOWModelTrainer(NeuralNetworkConfig config, Multiset<String> counts, Map<String, HuffmanNode> huffmanNodes, TrainingProgressListener listener) {
+	CBOWModelTrainer(NeuralNetworkConfig config, Multiset<Integer> counts, Map<Integer, HuffmanNode> huffmanNodes, TrainingProgressListener listener) {
 		super(config, counts, huffmanNodes, listener);
 	}
 	
 	/** {@link Worker} for {@link CBOWModelTrainer} */
 	private class CBOWWorker extends Worker {
-		private CBOWWorker(int randomSeed, int iter, Iterable<List<String>> batch) {
+		private CBOWWorker(int randomSeed, int iter, Iterable<List<Integer>> batch) {
 			super(randomSeed, iter, batch);
 		}
 		
-		@Override void trainSentence(List<String> sentence) {
+		@Override void trainSentence(List<Integer> sentence) {
 			int sentenceLength = sentence.size();
 			
 			for (int sentencePosition = 0; sentencePosition < sentenceLength; sentencePosition++) {
-				String word = sentence.get(sentencePosition);
+				Integer word = sentence.get(sentencePosition);
 				HuffmanNode huffmanNode = huffmanNodes.get(word);
 
 				for (int c = 0; c < layer1_size; c++)
@@ -98,7 +98,7 @@ class CBOWModelTrainer extends NeuralNetworkTrainer {
 		}
 	}
 
-	@Override Worker createWorker(int randomSeed, int iter, Iterable<List<String>> batch) {
+	@Override Worker createWorker(int randomSeed, int iter, Iterable<List<Integer>> batch) {
 		return new CBOWWorker(randomSeed, iter, batch);
 	}
 }

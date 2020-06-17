@@ -11,12 +11,12 @@ import java.nio.DoubleBuffer;
  * Represents a word2vec model where all the vectors are normalized to unit length.
  */
 public class NormalizedWord2VecModel extends Word2VecModel {
-	private NormalizedWord2VecModel(Iterable<String> vocab, int layerSize, final DoubleBuffer vectors) {
+	private NormalizedWord2VecModel(Iterable<Integer> vocab, int layerSize, final DoubleBuffer vectors) {
 		super(vocab, layerSize, vectors);
 		normalize();
 	}
 
-	private NormalizedWord2VecModel(Iterable<String> vocab, int layerSize, double[] vectors) {
+	private NormalizedWord2VecModel(Iterable<Integer> vocab, int layerSize, double[] vectors) {
 		super(vocab, layerSize, vectors);
 		normalize();
 	}

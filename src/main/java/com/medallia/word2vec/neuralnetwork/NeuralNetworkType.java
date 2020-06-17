@@ -12,7 +12,7 @@ import java.util.Map;
 public enum NeuralNetworkType {
 	/** Faster, slightly better accuracy for frequent words */
 	CBOW {
-		@Override NeuralNetworkTrainer createTrainer(NeuralNetworkConfig config, Multiset<String> counts, Map<String, HuffmanNode> huffmanNodes, TrainingProgressListener listener) {
+		@Override NeuralNetworkTrainer createTrainer(NeuralNetworkConfig config, Multiset<Integer> counts, Map<Integer, HuffmanNode> huffmanNodes, TrainingProgressListener listener) {
 			return new CBOWModelTrainer(config, counts, huffmanNodes, listener);
 		}
 		
@@ -22,7 +22,7 @@ public enum NeuralNetworkType {
 	},
 	/** Slower, better for infrequent words */
 	SKIP_GRAM {
-		@Override NeuralNetworkTrainer createTrainer(NeuralNetworkConfig config, Multiset<String> counts, Map<String, HuffmanNode> huffmanNodes, TrainingProgressListener listener) {
+		@Override NeuralNetworkTrainer createTrainer(NeuralNetworkConfig config, Multiset<Integer> counts, Map<Integer, HuffmanNode> huffmanNodes, TrainingProgressListener listener) {
 			return new SkipGramModelTrainer(config, counts, huffmanNodes, listener);
 		}
 		
@@ -36,5 +36,5 @@ public enum NeuralNetworkType {
 	public abstract double getDefaultInitialLearningRate();
 	
 	/** @return New {@link NeuralNetworkTrainer} */
-	abstract NeuralNetworkTrainer createTrainer(NeuralNetworkConfig config, Multiset<String> counts, Map<String, HuffmanNode> huffmanNodes, TrainingProgressListener listener);
+	abstract NeuralNetworkTrainer createTrainer(NeuralNetworkConfig config, Multiset<Integer> counts, Map<Integer, HuffmanNode> huffmanNodes, TrainingProgressListener listener);
 }

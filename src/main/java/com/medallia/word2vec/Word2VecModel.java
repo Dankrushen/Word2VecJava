@@ -37,23 +37,23 @@ import com.medallia.word2vec.util.AC;
  * @see {@link #forSearch()}
  */
 public class Word2VecModel {
-	final List<String> vocab;
+	final List<Integer> vocab;
 	final int layerSize;
 	final DoubleBuffer vectors;
 	private final static long ONE_GB = 1024 * 1024 * 1024;
 
-	Word2VecModel(Iterable<String> vocab, int layerSize, DoubleBuffer vectors) {
+	Word2VecModel(Iterable<Integer> vocab, int layerSize, DoubleBuffer vectors) {
 		this.vocab = ImmutableList.copyOf(vocab);
 		this.layerSize = layerSize;
 		this.vectors = vectors;
 	}
 
-	Word2VecModel(Iterable<String> vocab, int layerSize, double[] vectors) {
+	Word2VecModel(Iterable<Integer> vocab, int layerSize, double[] vectors) {
 		this(vocab, layerSize, DoubleBuffer.wrap(vectors));
 	}
 
 	/** @return Vocabulary */
-	public Iterable<String> getVocab() {
+	public Iterable<Integer> getVocab() {
 		return vocab;
 	}
 
@@ -161,7 +161,7 @@ public class Word2VecModel {
 					vocabSize,
 					layerSize));
 
-			List<String> vocabs = new ArrayList<String>(vocabSize);
+			List<Integer> vocabs = new ArrayList<Integer>(vocabSize);
 			DoubleBuffer vectors = ByteBuffer.allocateDirect(vocabSize * layerSize * 8).asDoubleBuffer();
 
 			long lastLogMessage = System.currentTimeMillis();
@@ -178,7 +178,7 @@ public class Word2VecModel {
 					}
 					c = (char) buffer.get();
 				}
-				vocabs.add(sb.toString());
+				vocabs.add(Integer.parseInt(sb.toString()));
 
 				// read vector
 				final FloatBuffer floatBuffer = buffer.asFloatBuffer();
@@ -254,7 +254,7 @@ public class Word2VecModel {
 	 */
 	@VisibleForTesting
 	static Word2VecModel fromTextFile(String filename, List<String> lines) throws IOException {
-		List<String> vocab = Lists.newArrayList();
+		List<Integer> vocab = Lists.newArrayList();
 		List<Double> vectors = Lists.newArrayList();
 		int vocabSize = Integer.parseInt(lines.get(0).split(" ")[0]);
 		int layerSize = Integer.parseInt(lines.get(0).split(" ")[1]);
@@ -269,7 +269,7 @@ public class Word2VecModel {
 
 		for (int n = 1; n < lines.size(); n++) {
 			String[] values = lines.get(n).split(" ");
-			vocab.add(values[0]);
+			vocab.add(Integer.parseInt(values[0]));
 
 			// Sanity check
 			Preconditions.checkArgument(

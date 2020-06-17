@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,10 +46,17 @@ public class Word2VecExamples {
 		if (!f.exists())
 	       	       throw new IllegalStateException("Please download and unzip the text8 example from http://mattmahoney.net/dc/text8.zip");
 		List<String> read = Common.readToList(f);
-		List<List<String>> partitioned = Lists.transform(read, new Function<String, List<String>>() {
+		List<List<Integer>> partitioned = Lists.transform(read, new Function<String, List<Integer>>() {
 			@Override
-			public List<String> apply(String input) {
-				return Arrays.asList(input.split(" "));
+			public List<Integer> apply(String input) {
+				String[] split = input.split(" ");
+				List<Integer> vals = new ArrayList<>();
+
+				for (String val : split) {
+					vals.add(Integer.parseInt(val));
+				}
+
+				return vals;
 			}
 		});
 		
@@ -95,10 +103,17 @@ public class Word2VecExamples {
 	/** Example using Skip-Gram model */
 	public static void skipGram() throws IOException, TException, InterruptedException, UnknownWordException {
 		List<String> read = Common.readToList(new File("sents.cleaned.word2vec.txt"));
-		List<List<String>> partitioned = Lists.transform(read, new Function<String, List<String>>() {
+		List<List<Integer>> partitioned = Lists.transform(read, new Function<String, List<Integer>>() {
 			@Override
-			public List<String> apply(String input) {
-				return Arrays.asList(input.split(" "));
+			public List<Integer> apply(String input) {
+				String[] split = input.split(" ");
+				List<Integer> vals = new ArrayList<>();
+
+				for (String val : split) {
+					vals.add(Integer.parseInt(val));
+				}
+
+				return vals;
 			}
 		});
 		
@@ -134,7 +149,7 @@ public class Word2VecExamples {
 				if (word.equals("EXIT")) {
 					break;
 				}
-				List<Match> matches = searcher.getMatches(word, 20);
+				List<Match> matches = searcher.getMatches(Integer.parseInt(word), 20);
 				System.out.println(Strings.joinObjects("\n", matches));
 			}
 		}
