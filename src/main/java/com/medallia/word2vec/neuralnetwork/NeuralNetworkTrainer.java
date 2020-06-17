@@ -317,7 +317,7 @@ public abstract class NeuralNetworkTrainer {
 				if (f > MAX_EXP)
 					g = (label - 1) * alpha;
 				else if (f < -MAX_EXP)
-					g = (label - 0) * alpha;
+					g = (label) * alpha;
 				else
 					g = (label - EXP_TABLE[(int)((f + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))]) * alpha;
 				for (int c = 0; c < layer1_size; c++)
